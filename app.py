@@ -4,75 +4,163 @@ import plotly.express as px
 from datetime import timezone
 
 # =========================================================
-# UI helpers (Bilingual + Empty state)
+# Page config
 # =========================================================
-def t(en: str, zh: str) -> str:
-    return f"{en}（{zh}）"
+st.set_page_config(page_title="Luanta Jira Analytics", layout="wide")
 
-def h1(en: str, zh: str):
-    st.header(t(en, zh))
+# =========================================================
+# Global CSS (Cards / spacing / typography)
+# =========================================================
+st.markdown(
+    """
+<style>
+/* Make overall spacing calmer */
+.block-container { padding-top: 1.2rem; padding-bottom: 2rem; }
 
-def h2(en: str, zh: str):
-    st.subheader(t(en, zh))
+/* Card container */
+.section-card {
+  border: 1px solid rgba(49, 51, 63, 0.12);
+  background: rgba(255,255,255,0.70);
+  border-radius: 14px;
+  padding: 18px 18px 10px 18px;
+  margin: 14px 0 18px 0;
+}
 
-def caption(en: str, zh: str):
-    st.caption(f"{en} / {zh}")
+/* Card header area */
+.section-title {
+  font-size: 1.25rem;
+  font-weight: 700;
+  margin: 0 0 0.15rem 0;
+}
+.section-subtitle {
+  font-size: 0.92rem;
+  opacity: 0.75;
+  margin: 0 0 0.6rem 0;
+}
 
-def empty_state(
-    zh: str,
-    en: str = "",
-    tips=None,
-    level="info"
-):
-    msg = f"ℹ️ {en}\n\n{zh}" if en else f"ℹ️ {zh}"
-    if level == "warning":
-        st.warning(msg)
-    else:
-        st.info(msg)
+/* Smaller note block */
+.note {
+  border-left: 4px solid rgba(0, 123, 255, 0.55);
+  padding: 10px 12px;
+  background: rgba(0, 123, 255, 0.06);
+  border-radius: 10px;
+  margin: 8px 0 10px 0;
+}
 
+/* Empty state block */
+.empty {
+  border-left: 4px solid rgba(255, 193, 7, 0.70);
+  padding: 10px 12px;
+  background: rgba(255, 193, 7, 0.10);
+  border-radius: 10px;
+  margin: 8px 0 10px 0;
+}
+
+/* Divider line between subparts */
+.soft-divider {
+  height: 1px;
+  background: rgba(49, 51, 63, 0.10);
+  margin: 12px 0 12px 0;
+}
+
+/* Reduce chart title noise */
+h3 { margin-top: 0.5rem !important; }
+
+/* Sidebar spacing */
+section[data-testid="stSidebar"] .block-container { padding-top: 1rem; }
+</style>
+""",
+    unsafe_allow_html=True,
+)
+
+# =========================================================
+# Language toggle
+# =========================================================
+LANG_OPTIONS = {
+    "中文": "zh",
+    "English": "en",
+    "雙語": "bi",
+}
+
+st.sidebar.header("Settings")
+lang_label = st.sidebar.radio("Language / 語言", list(LANG_OPTIONS.keys()), index=0)
+LANG = LANG_OPTIONS[lang_label]
+
+
+def tx(en: str, zh: str) -> str:
+    """Return text in selected language. No parentheses. Bilingual shown as two lines."""
+    if LANG == "zh":
+        return zh
+    if LANG == "en":
+        return en
+    # bilingual
+    return f"{en}\n{zh}"
+
+
+def card_title(en: str, zh: str, subtitle_en: str = "", subtitle_zh: str = ""):
+    st.markdown(
+        f"""
+<div class="section-title">{tx(en, zh).replace("\n","<br/>")}</div>
+<div class="section-subtitle">{tx(subtitle_en, subtitle_zh).replace("\n","<br/>")}</div>
+""",
+        unsafe_allow_html=True,
+    )
+
+
+def note(en: str, zh: str):
+    st.markdown(
+        f"""<div class="note">{tx(en, zh).replace("\n","<br/>")}</div>""",
+        unsafe_allow_html=True,
+    )
+
+
+def empty_state(en: str, zh: str, tips=None):
+    st.markdown(
+        f"""<div class="empty">{tx(en, zh).replace("\n","<br/>")}</div>""",
+        unsafe_allow_html=True,
+    )
     if tips:
-        with st.expander(t("Possible reasons / Troubleshooting", "可能原因 / 排查建議"), expanded=False):
+        with st.expander(tx("Possible reasons / Troubleshooting", "可能原因 / 排查建議"), expanded=False):
             for x in tips:
                 st.write(f"- {x}")
 
-def render_chart_or_empty(df_plot: pd.DataFrame, chart_fn, empty_zh: str, empty_en: str, tips=None):
+
+def render_chart_or_empty(df_plot: pd.DataFrame, chart_fn, empty_en: str, empty_zh: str, tips=None):
     if df_plot is None or df_plot.empty:
-        empty_state(empty_zh, empty_en, tips=tips, level="info")
+        empty_state(empty_en, empty_zh, tips=tips)
         return
     fig = chart_fn(df_plot)
     st.plotly_chart(fig, use_container_width=True)
 
+
 def safe_first_match(cols, keyword_list):
     """Return first column that contains any keyword (case-insensitive)."""
-    lower_map = {c.lower(): c for c in cols}
     for kw in keyword_list:
         for c in cols:
             if kw.lower() in c.lower():
                 return c
     return None
 
+
 def to_datetime_safe(s):
-    # Parse datetime robustly; return NaT for bad values
     return pd.to_datetime(s, errors="coerce", utc=True)
 
+
 # =========================================================
-# Page config
+# Title
 # =========================================================
-st.set_page_config(page_title="Luanta Jira Analytics", layout="wide")
-st.title("📊 " + t("Luanta Service Performance Dashboard", "Luanta 服務績效儀表板"))
+st.title("📊 " + tx("Luanta Service Performance Dashboard", "Luanta 服務績效儀表板"))
 
 # =========================================================
 # Sidebar - Upload
 # =========================================================
-st.sidebar.header(t("Step 1: Upload Data", "步驟 1：上傳資料"))
-uploaded_file = st.sidebar.file_uploader("Upload Jira CSV / 上傳 Jira CSV", type="csv")
+st.sidebar.header(tx("Step 1: Upload Data", "步驟 1：上傳資料"))
+uploaded_file = st.sidebar.file_uploader(tx("Upload Jira CSV", "上傳 Jira CSV"), type="csv")
 
-# Default data fallback: v1 first, then v0
 df = None
 default_loaded = None
 
 if uploaded_file is None:
-    # Try v1 then v0
     for fn in ["Luanta_Final_Demo_Data_v1.csv", "Luanta_Final_Demo_Data.csv"]:
         try:
             df = pd.read_csv(fn)
@@ -82,13 +170,16 @@ if uploaded_file is None:
             pass
 
     if df is not None:
-        st.success(f"✅ {t('Loaded default sample data', '已載入預設範例資料')}：{default_loaded}")
-        st.info("💡 " + t("You can upload a new CSV anytime from the sidebar.", "你也可以隨時在左側上傳新的 CSV。"))
+        st.success(f"✅ {tx('Loaded default sample data', '已載入預設範例資料')}：{default_loaded}")
+        note(
+            "You can upload a new CSV anytime from the sidebar.",
+            "你也可以隨時在左側上傳新的 CSV。",
+        )
     else:
-        st.warning("⚠️ " + t("Please upload a Jira CSV to start.", "請先在左側上傳 Jira CSV 才能開始分析。"))
+        st.warning("⚠️ " + tx("Please upload a Jira CSV to start.", "請先在左側上傳 Jira CSV 才能開始分析。"))
 else:
     df = pd.read_csv(uploaded_file)
-    st.success(f"✅ {t('Successfully loaded uploaded file', '已成功讀取上傳檔案')}：{uploaded_file.name}")
+    st.success(f"✅ {tx('Successfully loaded uploaded file', '已成功讀取上傳檔案')}：{uploaded_file.name}")
 
 if df is None:
     st.stop()
@@ -96,11 +187,11 @@ if df is None:
 # =========================================================
 # Debug / Preview
 # =========================================================
-with st.expander(t("Debug info", "除錯資訊"), expanded=False):
-    st.write(t("Detected columns", "偵測到的欄位") + ":", list(df.columns))
-    st.write(t("Row count", "資料筆數") + ":", len(df))
+with st.expander(tx("Debug info", "除錯資訊"), expanded=False):
+    st.write(tx("Detected columns", "偵測到的欄位") + ":", list(df.columns))
+    st.write(tx("Row count", "資料筆數") + ":", len(df))
 
-with st.expander(t("Data preview (first 20 rows)", "資料預覽（前 20 筆）"), expanded=False):
+with st.expander(tx("Data preview (first 20 rows)", "資料預覽（前 20 筆）"), expanded=False):
     st.dataframe(df.head(20), use_container_width=True)
 
 # =========================================================
@@ -118,51 +209,62 @@ assignee_col = "Assignee" if "Assignee" in df.columns else safe_first_match(df.c
 blocked_reason_col = "Blocked_Reason" if "Blocked_Reason" in df.columns else safe_first_match(df.columns, ["blocked_reason", "block_reason", "blocked"])
 root_cause_col = "Root_Cause_Category" if "Root_Cause_Category" in df.columns else safe_first_match(df.columns, ["root_cause", "cause"])
 
+# SLA columns
+sla_breached_col = "SLA_Breached" if "SLA_Breached" in df.columns else safe_first_match(df.columns, ["sla_breached", "breach"])
+resolution_days_col = "Resolution_Days" if "Resolution_Days" in df.columns else safe_first_match(df.columns, ["resolution_days", "resolution_time_days", "resolution"])
+sla_target_col = "SLA_Target_Days" if "SLA_Target_Days" in df.columns else safe_first_match(df.columns, ["sla_target_days", "sla_days", "sla_target"])
+
 # =========================================================
-# Key Metrics
+# SECTION: Key Metrics (Card)
 # =========================================================
-h1("Key Metrics", "關鍵指標")
-caption("High-level KPIs for quick health check.", "用 3 個數字快速判斷整體健康度。")
+st.markdown('<div class="section-card">', unsafe_allow_html=True)
+card_title(
+    "Key Metrics",
+    "關鍵指標",
+    "High-level KPIs for a quick health check.",
+    "用幾個數字快速判斷整體健康度。",
+)
 
 m1, m2, m3 = st.columns(3)
-
 total_tickets = len(df)
-m1.metric(t("Total Tickets", "總工單數"), total_tickets)
+m1.metric(tx("Total Tickets", "總工單數"), total_tickets)
 
-# P0 count
 p0_count = "N/A"
 if priority_col and priority_col in df.columns:
-    # Common P0 labels: "P0-Critical", "P0", "Critical"
     p0_count = int(df[priority_col].astype(str).str.contains("P0", case=False, na=False).sum())
-m2.metric(t("P0 Critical Issues", "P0 重大工單數"), p0_count)
+m2.metric(tx("P0 Critical Issues", "P0 重大工單數"), p0_count)
 
 avg_delay = "N/A"
 if delay_col and delay_col in df.columns:
     avg_delay_val = pd.to_numeric(df[delay_col], errors="coerce").mean()
     if pd.notna(avg_delay_val):
         avg_delay = f"{avg_delay_val:.1f}%"
-m3.metric(t("Avg. Delay Rate", "平均延遲率"), avg_delay)
+m3.metric(tx("Avg. Delay Rate", "平均延遲率"), avg_delay)
+
+st.markdown("</div>", unsafe_allow_html=True)
 
 # =========================================================
-# Performance Breakdown
+# SECTION: Performance Breakdown (Card)
 # =========================================================
-h1("Performance Breakdown", "績效拆解")
-caption("Break down delay by role/team to locate bottlenecks.", "依角色/團隊拆解延遲，定位瓶頸。")
+st.markdown('<div class="section-card">', unsafe_allow_html=True)
+card_title(
+    "Performance Breakdown",
+    "績效拆解",
+    "Break down delay by role/team to locate bottlenecks.",
+    "依角色拆解延遲，定位瓶頸。",
+)
 
 if not role_col or not delay_col or role_col not in df.columns or delay_col not in df.columns:
     empty_state(
-        zh="目前資料不足以顯示「角色延遲拆解」。需要至少包含 Role 與 Delay Rate 欄位。",
-        en="Not enough data to show delay breakdown by role. Need Role and Delay Rate columns.",
+        "Not enough data to show delay breakdown by role. Need Role and Delay Rate columns.",
+        "目前資料不足以顯示角色延遲拆解，需要 Role 與 Delay Rate 欄位。",
         tips=[
-            "確認 CSV 是否包含 Role（角色/團隊）",
+            "確認 CSV 是否包含 Role",
             f"確認是否包含延遲欄位（例如 {delay_col or 'Delay_Rate_%'}）",
         ],
     )
 else:
-    perf_df = (
-        df[[role_col, delay_col]]
-        .copy()
-    )
+    perf_df = df[[role_col, delay_col]].copy()
     perf_df[delay_col] = pd.to_numeric(perf_df[delay_col], errors="coerce")
     perf_df = perf_df.dropna(subset=[role_col, delay_col])
     perf_df = perf_df.groupby(role_col, as_index=False)[delay_col].mean().sort_values(delay_col, ascending=False)
@@ -170,37 +272,48 @@ else:
     render_chart_or_empty(
         perf_df,
         chart_fn=lambda d: px.bar(
-            d, x=role_col, y=delay_col, color=role_col,
+            d,
+            x=role_col,
+            y=delay_col,
+            color=role_col,
             labels={delay_col: "Delay Rate (%)"},
-            title="Average Delay by Team Role"
+            title=tx("Average Delay by Team Role", "各角色平均延遲"),
         ),
-        empty_zh="目前資料不足以計算「角色平均延遲」。常見原因：延遲欄位為空或無法轉成數字。",
         empty_en="Not enough numeric values to compute average delay by role.",
+        empty_zh="目前資料不足以計算角色平均延遲，常見原因是延遲欄位為空或無法轉成數字。",
         tips=[
             "確認 Delay 欄位是否為數字（例如 12.3）",
-            "避免混入 % 符號或文字（如 '12.3%'）",
+            "避免混入 % 符號或文字（如 12.3%）",
         ],
     )
 
+st.markdown("</div>", unsafe_allow_html=True)
+
 # =========================================================
-# Workflow Finder
+# SECTION: Workflow Finder (Card)
 # =========================================================
-h1("Workflow Finder", "工作流程分析")
-caption("WIP and queue time to identify where the workflow is stuck.", "用在手量與等待時間找出流程卡點。")
+st.markdown('<div class="section-card">', unsafe_allow_html=True)
+card_title(
+    "Workflow Finder",
+    "工作流程分析",
+    "Use WIP and queue time to identify where the workflow is stuck.",
+    "用在手量與等待時間找出流程卡點。",
+)
 
 c1, c2 = st.columns(2)
 
-# ---------- WIP by Status ----------
+# WIP by Status
 with c1:
-    h2("WIP by Status", "各狀態在手量")
-    caption("Shows current ticket distribution across statuses.", "顯示工單目前分佈在哪些狀態。")
+    st.markdown("<div class='soft-divider'></div>", unsafe_allow_html=True)
+    st.markdown(f"### {tx('WIP by Status', '各狀態在手量')}")
+    st.caption(tx("Current ticket distribution across statuses.", "工單目前分佈在哪些狀態。"))
 
     if not status_col or status_col not in df.columns:
         empty_state(
-            zh="目前資料不足以計算「各狀態在手量」。常見原因：缺少 Status_Current 欄位，或欄位全為空。",
-            en="Not enough data to compute WIP by status.",
+            "Not enough data to compute WIP by status.",
+            "目前資料不足以計算各狀態在手量，常見原因是缺少 Status_Current 或欄位全空。",
             tips=[
-                "確認 CSV 是否包含欄位：Status_Current",
+                "確認 CSV 是否包含 Status_Current",
                 "確認 Status_Current 是否有值（不是全部空白）",
             ],
         )
@@ -212,49 +325,58 @@ with c1:
             .rename_axis("Status")
             .reset_index(name="Count")
         )
+
+        # ✅ 空值時顯示中性文案（不留白）
         render_chart_or_empty(
             wip_df,
-            chart_fn=lambda d: px.bar(d, x="Status", y="Count", title="Current Work In Progress by Status"),
-            empty_zh="目前沒有可用的狀態資料可顯示（狀態可能全為空）。",
+            chart_fn=lambda d: px.bar(d, x="Status", y="Count", title=tx("Current Work In Progress by Status", "各狀態在手量")),
             empty_en="No usable status values found.",
-            tips=["確認 Status_Current 欄位是否有填入狀態值（To Do / In Progress / Review / Done 等）"],
+            empty_zh="目前沒有可用的狀態資料可以顯示。常見原因是 Status_Current 都是空值或狀態命名不一致。",
+            tips=[
+                "確認 Status_Current 是否有 To Do / In Progress / Review / Done 等值",
+                "如果你的狀態命名不同，建議先在 CSV 統一命名或在程式加 mapping",
+            ],
         )
 
-# ---------- Queue Time by Status ----------
+# Queue Time by Status
 with c2:
-    h2("Queue Time (days) by Status", "各狀態等待時間／天")
-    caption("Average time tickets stay in each status (queue time).", "各狀態平均停留時間，用來找最慢節點。")
+    st.markdown("<div class='soft-divider'></div>", unsafe_allow_html=True)
+    st.markdown(f"### {tx('Queue Time (days) by Status', '各狀態等待時間（天）')}")
+    st.caption(tx("Average time tickets stay in each status.", "工單在每個狀態平均停留多久，用來找最慢節點。"))
 
-    # Compute queue days if possible
     q_df = pd.DataFrame()
-
     if status_col and status_entered_col and status_col in df.columns and status_entered_col in df.columns:
         tmp = df[[status_col, status_entered_col]].copy()
         tmp[status_entered_col] = to_datetime_safe(tmp[status_entered_col])
-
-        # Use "now" in UTC for consistent calc (demo data might be old; still OK for illustration)
         now_utc = pd.Timestamp.now(tz=timezone.utc)
         tmp["_queue_days"] = (now_utc - tmp[status_entered_col]).dt.total_seconds() / 86400.0
         tmp = tmp.dropna(subset=[status_col, "_queue_days"])
-
         q_df = tmp.groupby(status_col, as_index=False)["_queue_days"].mean().sort_values("_queue_days", ascending=False)
 
+    # ✅ 空值時顯示中性文案（不留白）
     render_chart_or_empty(
         q_df,
-        chart_fn=lambda d: px.bar(d, x=status_col, y="_queue_days", title="Average Queue Time by Status (days)"),
-        empty_zh="目前資料不足以計算「等待時間（Queue Time）」。常見原因：缺少狀態進入時間（例如 Status_Entered_Date），或日期格式無法解析。",
+        chart_fn=lambda d: px.bar(d, x=status_col, y="_queue_days", title=tx("Average Queue Time by Status (days)", "各狀態平均等待時間（天）")),
         empty_en="Not enough data to compute queue time by status.",
+        empty_zh="目前無法計算等待時間。常見原因是缺少 Status_Entered_Date，或日期格式無法解析。",
         tips=[
-            "確認 CSV 是否包含：Status_Entered_Date（進入目前狀態的時間）",
-            "日期格式建議用 ISO（例如 2025-01-01 18:34:25+00:00）",
+            "確認 CSV 是否包含 Status_Entered_Date",
+            "日期建議使用 ISO 格式，例如 2025-01-01 18:34:25+00:00",
         ],
     )
 
+st.markdown("</div>", unsafe_allow_html=True)
+
 # =========================================================
-# Stale Tickets
+# SECTION: Stale Tickets (Card)
 # =========================================================
-h1("Stale Tickets (no update)", "久未更新工單")
-caption("Tickets that haven't been updated for a long time; often indicates workflow stuck.", "長時間未更新，常代表流程卡住或缺乏推進。")
+st.markdown('<div class="section-card">', unsafe_allow_html=True)
+card_title(
+    "Stale Tickets",
+    "久未更新工單",
+    "Tickets not updated for a long time; often indicates work is stuck.",
+    "長時間未更新，常代表流程卡住或缺乏推進。",
+)
 
 stale_df = pd.DataFrame()
 
@@ -264,8 +386,7 @@ if last_updated_col and last_updated_col in df.columns:
     now_utc = pd.Timestamp.now(tz=timezone.utc)
     tmp["_stale_days"] = (now_utc - tmp[last_updated_col]).dt.total_seconds() / 86400.0
 
-    # Default threshold: 14 days
-    threshold = st.slider(t("Stale threshold (days)", "久未更新門檻（天）"), 1, 180, 30)
+    threshold = st.slider(tx("Stale threshold (days)", "久未更新門檻（天）"), 1, 180, 30)
 
     stale_df = tmp.dropna(subset=["_stale_days"])
     stale_df = stale_df[stale_df["_stale_days"] >= threshold].sort_values("_stale_days", ascending=False)
@@ -277,43 +398,43 @@ if last_updated_col and last_updated_col in df.columns:
 
     if stale_df.empty:
         empty_state(
-            zh="目前沒有符合「久未更新」門檻的工單，或資料中的更新時間不足以計算。",
-            en="No tickets exceed the stale threshold, or timestamps are missing.",
-            tips=["如果你期待看到資料，請確認 Last_Updated_Date 是否存在且可解析為日期。"],
+            "No tickets exceed the stale threshold, or timestamps are missing.",
+            "目前沒有符合門檻的久未更新工單，或更新時間資料不足以計算。",
+            tips=[
+                "如果你預期會有資料，請確認 Last_Updated_Date 是否存在且為可解析日期",
+                "可先把門檻天數調小看看",
+            ],
         )
     else:
         st.dataframe(stale_df[show_cols], use_container_width=True)
-
 else:
     empty_state(
-        zh="目前資料不足以計算「久未更新工單」。常見原因：缺少 Last_Updated_Date 欄位，或日期格式無法解析。",
-        en="Not enough data to compute stale tickets. Missing Last_Updated_Date or invalid datetime format.",
+        "Not enough data to compute stale tickets. Missing Last_Updated_Date or invalid datetime format.",
+        "目前無法計算久未更新工單。常見原因是缺少 Last_Updated_Date 或日期格式無法解析。",
         tips=[
-            "確認 CSV 是否包含：Last_Updated_Date",
-            "日期格式建議用 ISO（例如 2025-01-01 18:34:25+00:00）",
+            "確認 CSV 是否包含 Last_Updated_Date",
+            "日期建議用 ISO 格式，例如 2025-01-01 18:34:25+00:00",
         ],
     )
 
+st.markdown("</div>", unsafe_allow_html=True)
+
 # =========================================================
-# SLA / Risk
+# SECTION: SLA / Risk (Card)
 # =========================================================
-h1("SLA / Risk", "SLA 與風險")
-caption("Estimate SLA breach risk; depends on whether SLA columns exist.", "估算 SLA 違約風險；需要有 SLA 相關欄位。")
+st.markdown('<div class="section-card">', unsafe_allow_html=True)
+card_title(
+    "SLA / Risk",
+    "SLA 與風險",
+    "Estimate SLA breach risk if SLA columns exist.",
+    "若有 SLA 欄位，估算違約風險。",
+)
 
 sla_df = pd.DataFrame()
 sla_breach_rate = None
-
-# Option A: SLA_Breached exists
-sla_breached_col = "SLA_Breached" if "SLA_Breached" in df.columns else safe_first_match(df.columns, ["sla_breached", "breach"])
-
-# Option B: Resolution_Days + SLA_Target_Days exist
-resolution_days_col = "Resolution_Days" if "Resolution_Days" in df.columns else safe_first_match(df.columns, ["resolution_days", "resolution_time_days", "resolution"])
-sla_target_col = "SLA_Target_Days" if "SLA_Target_Days" in df.columns else safe_first_match(df.columns, ["sla_target_days", "sla_days", "sla_target"])
-
 tmp = df.copy()
 
 if sla_breached_col and sla_breached_col in tmp.columns:
-    # Normalize boolean-ish values
     tmp[sla_breached_col] = tmp[sla_breached_col].astype(str).str.lower().isin(["true", "1", "yes", "y"])
     if priority_col and priority_col in tmp.columns:
         sla_df = tmp.groupby(priority_col, as_index=False)[sla_breached_col].mean()
@@ -324,7 +445,6 @@ elif resolution_days_col and sla_target_col and resolution_days_col in tmp.colum
     tmp[resolution_days_col] = pd.to_numeric(tmp[resolution_days_col], errors="coerce")
     tmp[sla_target_col] = pd.to_numeric(tmp[sla_target_col], errors="coerce")
     tmp["_sla_breached"] = (tmp[resolution_days_col] > tmp[sla_target_col])
-
     if priority_col and priority_col in tmp.columns:
         sla_df = tmp.groupby(priority_col, as_index=False)["_sla_breached"].mean()
         sla_df["Breach Rate (%)"] = (sla_df["_sla_breached"] * 100).round(2)
@@ -332,140 +452,191 @@ elif resolution_days_col and sla_target_col and resolution_days_col in tmp.colum
 
 if sla_breach_rate is None:
     empty_state(
-        zh="目前資料不足以計算 SLA 違約率。常見原因：缺少 SLA_Breached，或缺少 Resolution_Days + SLA_Target_Days。",
-        en="Not enough data to compute SLA breach rate. Missing SLA_Breached or (Resolution_Days + SLA_Target_Days).",
+        "SLA fields not available. Cannot compute breach rate.",
+        "缺少 SLA 欄位，無法計算違約率。",
         tips=[
-            "如果你希望計算 SLA，建議在 CSV 加入 SLA_Target_Days 與 Resolution_Days（或直接提供 SLA_Breached）。",
+            "提供 SLA_Breached（true/false）最簡單",
+            "或提供 Resolution_Days + SLA_Target_Days 也可推算",
         ],
     )
 else:
-    st.write(f"**{t('SLA Breach Rate', 'SLA 違約率')}**: {sla_breach_rate:.1f}%")
+    st.write(f"**{tx('SLA Breach Rate', 'SLA 違約率')}**: {sla_breach_rate:.1f}%")
     if not sla_df.empty:
         show_cols = [priority_col, "Breach Rate (%)"] if (priority_col and priority_col in sla_df.columns) else ["Breach Rate (%)"]
         st.dataframe(sla_df[show_cols], use_container_width=True)
 
+st.markdown("</div>", unsafe_allow_html=True)
+
 # =========================================================
-# Root Cause Breakdown
+# SECTION: Root Cause Breakdown (Card)
 # =========================================================
-h1("Root Cause Breakdown", "根因分佈")
-caption("Aggregate probable root causes to inform process improvements.", "彙整根因，指向流程改善與制度化。")
+st.markdown('<div class="section-card">', unsafe_allow_html=True)
+card_title(
+    "Root Cause Breakdown",
+    "根因分佈",
+    "Aggregate root causes to inform process improvements.",
+    "彙整根因，指向流程改善。",
+)
 
 if not root_cause_col or root_cause_col not in df.columns:
     empty_state(
-        zh="目前資料不足以顯示根因分佈。常見原因：缺少 Root_Cause_Category 欄位。",
-        en="Not enough data to show root cause distribution. Missing Root_Cause_Category.",
-        tips=[
-            "建議在 CSV 加入 Root_Cause_Category（例如 Spec/Requirement、API Dependency、Data/DB 等）",
-        ],
+        "Missing Root_Cause_Category. Cannot show distribution.",
+        "缺少 Root_Cause_Category，無法顯示根因分佈。",
+        tips=["建議加入 Root_Cause_Category，例如 Spec/Requirement、API Dependency、Data/DB 等"],
     )
 else:
     rc = df[root_cause_col].dropna()
     if rc.empty:
         empty_state(
-            zh="根因欄位存在，但目前沒有可用值（可能全為空）。",
-            en="Root cause column exists but contains no usable values.",
-            tips=["確認 Root_Cause_Category 是否有填值。"],
+            "Root cause column exists but contains no usable values.",
+            "根因欄位存在，但目前沒有可用值（可能全空）。",
+            tips=["確認 Root_Cause_Category 是否有填值"],
         )
     else:
         rc_df = rc.value_counts().reset_index()
         rc_df.columns = ["Root Cause", "Count"]
-        rc_df["Share (%)"] = (rc_df["Count"] / rc_df["Count"].sum() * 100).round(1)
 
         render_chart_or_empty(
             rc_df,
-            chart_fn=lambda d: px.pie(d, names="Root Cause", values="Count", title="Root Cause Distribution"),
-            empty_zh="目前無法顯示根因分佈（資料可能不足）。",
+            chart_fn=lambda d: px.pie(d, names="Root Cause", values="Count", title=tx("Root Cause Distribution", "根因分佈")),
             empty_en="Unable to render root cause distribution.",
+            empty_zh="目前無法顯示根因分佈（資料可能不足）。",
         )
 
+st.markdown("</div>", unsafe_allow_html=True)
+
 # =========================================================
-# Blocked Details
+# SECTION: Blocked Details (Card)
 # =========================================================
-h1("Blocked Details", "卡關明細")
-caption("Tickets currently blocked and the reasons; good for action items.", "列出目前卡關工單與原因，方便開會推進。")
+st.markdown('<div class="section-card">', unsafe_allow_html=True)
+card_title(
+    "Blocked Details",
+    "卡關明細",
+    "Blocked tickets and reasons; good for action items.",
+    "列出卡關工單與原因，方便推進。",
+)
 
 blocked_df = pd.DataFrame()
 if status_col and status_col in df.columns:
     blocked_df = df[df[status_col].astype(str).str.lower().eq("blocked")].copy()
 
-# If no explicit status=Blocked, fallback: blocked reason exists
 if blocked_df.empty and blocked_reason_col and blocked_reason_col in df.columns:
     blocked_df = df[df[blocked_reason_col].notna()].copy()
 
 if blocked_df.empty:
     empty_state(
-        zh="目前沒有可辨識的卡關工單（Blocked）。若你預期有資料，可能是狀態命名不同或缺少 Blocked_Reason。",
-        en="No blocked tickets detected. Status naming may differ or Blocked_Reason is missing.",
+        "No blocked tickets detected.",
+        "目前沒有辨識到卡關工單。",
         tips=[
-            "確認 Status_Current 是否包含 'Blocked' 狀態",
-            "或在 CSV 提供 Blocked_Reason 欄位以利辨識",
+            "確認 Status_Current 是否有 Blocked",
+            "或提供 Blocked_Reason 欄位以利辨識",
         ],
     )
 else:
-    st.write(f"**{t('Blocked tickets', '卡關工單數')}**: {len(blocked_df)}")
-
+    st.write(f"**{tx('Blocked tickets', '卡關工單數')}**: {len(blocked_df)}")
     cols = []
     for c in [issue_key_col, summary_col, priority_col, role_col, assignee_col, blocked_reason_col, status_col]:
         if c and c in blocked_df.columns:
             cols.append(c)
-
     st.dataframe(blocked_df[cols].head(50), use_container_width=True)
 
-# =========================================================
-# Executive Summary
-# =========================================================
-h1("Executive Summary", "主管摘要")
-caption("Auto-generated talking points for managers; neutral and action-oriented.", "自動生成主管可用的重點摘要：中性、可行動。")
+st.markdown("</div>", unsafe_allow_html=True)
 
-if st.button(t("Generate Executive Report", "產出主管摘要")):
+# =========================================================
+# SECTION: Executive Summary (Card)
+# =========================================================
+st.markdown('<div class="section-card">', unsafe_allow_html=True)
+card_title(
+    "Executive Summary",
+    "主管摘要",
+    "Neutral, action-oriented talking points.",
+    "中性且可行動的主管重點。",
+)
+
+if st.button(tx("Generate Executive Report", "產出主管摘要")):
     bullets = []
 
     # Delay bottleneck
     if role_col and delay_col and role_col in df.columns and delay_col in df.columns:
-        tmp = df[[role_col, delay_col]].copy()
-        tmp[delay_col] = pd.to_numeric(tmp[delay_col], errors="coerce")
-        tmp = tmp.dropna(subset=[role_col, delay_col])
-        if not tmp.empty:
-            r = tmp.groupby(role_col)[delay_col].mean().sort_values(ascending=False)
+        tmp2 = df[[role_col, delay_col]].copy()
+        tmp2[delay_col] = pd.to_numeric(tmp2[delay_col], errors="coerce")
+        tmp2 = tmp2.dropna(subset=[role_col, delay_col])
+        if not tmp2.empty:
+            r = tmp2.groupby(role_col)[delay_col].mean().sort_values(ascending=False)
             top_role = r.index[0]
-            bullets.append(f"- **{t('Delay Bottleneck', '延遲瓶頸')}**: {top_role} {t('has the highest average delay', '平均延遲最高')} ({r.iloc[0]:.1f}%).")
+            bullets.append(tx(
+                f"- Delay bottleneck: {top_role} has the highest average delay ({r.iloc[0]:.1f}%).",
+                f"- 延遲瓶頸：{top_role} 平均延遲最高（{r.iloc[0]:.1f}%）。"
+            ))
         else:
-            bullets.append(f"- **{t('Delay Bottleneck', '延遲瓶頸')}**: {t('Insufficient numeric delay data', '延遲欄位無有效數字資料')}。")
+            bullets.append(tx(
+                "- Delay bottleneck: insufficient numeric delay data.",
+                "- 延遲瓶頸：延遲欄位缺乏可用數字資料。"
+            ))
     else:
-        bullets.append(f"- **{t('Delay Bottleneck', '延遲瓶頸')}**: {t('Missing Role/Delay columns', '缺少 Role 或 Delay 欄位')}。")
+        bullets.append(tx(
+            "- Delay bottleneck: missing Role/Delay columns.",
+            "- 延遲瓶頸：缺少 Role 或 Delay 欄位。"
+        ))
 
     # Queue bottleneck
     if status_col and status_entered_col and status_col in df.columns and status_entered_col in df.columns:
-        tmp = df[[status_col, status_entered_col]].copy()
-        tmp[status_entered_col] = to_datetime_safe(tmp[status_entered_col])
+        tmp3 = df[[status_col, status_entered_col]].copy()
+        tmp3[status_entered_col] = to_datetime_safe(tmp3[status_entered_col])
         now_utc = pd.Timestamp.now(tz=timezone.utc)
-        tmp["_queue_days"] = (now_utc - tmp[status_entered_col]).dt.total_seconds() / 86400.0
-        tmp = tmp.dropna(subset=[status_col, "_queue_days"])
-        if not tmp.empty:
-            q = tmp.groupby(status_col)["_queue_days"].mean().sort_values(ascending=False)
+        tmp3["_queue_days"] = (now_utc - tmp3[status_entered_col]).dt.total_seconds() / 86400.0
+        tmp3 = tmp3.dropna(subset=[status_col, "_queue_days"])
+        if not tmp3.empty:
+            q = tmp3.groupby(status_col)["_queue_days"].mean().sort_values(ascending=False)
             top_status = q.index[0]
-            bullets.append(f"- **{t('Queue Bottleneck', '流程等待瓶頸')}**: {top_status} {t('has the longest average queue time', '平均等待時間最長')} ({q.iloc[0]:.1f} {t('days', '天')}).")
+            bullets.append(tx(
+                f"- Queue bottleneck: {top_status} has the longest average queue time ({q.iloc[0]:.1f} days).",
+                f"- 等待瓶頸：{top_status} 平均等待時間最長（{q.iloc[0]:.1f} 天）。"
+            ))
         else:
-            bullets.append(f"- **{t('Queue Bottleneck', '流程等待瓶頸')}**: {t('No usable queue-time values', '無可用等待時間數值')}。")
+            bullets.append(tx(
+                "- Queue bottleneck: no usable queue-time values.",
+                "- 等待瓶頸：缺乏可用等待時間資料。"
+            ))
     else:
-        bullets.append(f"- **{t('Queue Bottleneck', '流程等待瓶頸')}**: {t('Missing Status_Entered_Date (queue-time) field', '缺少 Status_Entered_Date 無法計算等待時間')}。")
+        bullets.append(tx(
+            "- Queue bottleneck: missing Status_Entered_Date; cannot compute queue time.",
+            "- 等待瓶頸：缺少 Status_Entered_Date，無法計算等待時間。"
+        ))
 
     # SLA risk
     if sla_breach_rate is not None:
-        bullets.append(f"- **{t('SLA Risk', 'SLA 風險')}**: {t('Breach rate is', '違約率為')} {sla_breach_rate:.1f}%.")
+        bullets.append(tx(
+            f"- SLA risk: breach rate is {sla_breach_rate:.1f}%.",
+            f"- SLA 風險：違約率 {sla_breach_rate:.1f}%。"
+        ))
     else:
-        bullets.append(f"- **{t('SLA Risk', 'SLA 風險')}**: {t('SLA fields not available; risk not computed', '缺少 SLA 欄位，未計算風險')}。")
+        bullets.append(tx(
+            "- SLA risk: SLA fields not available; not computed.",
+            "- SLA 風險：缺少 SLA 欄位，未計算。"
+        ))
 
     # Root cause
     if root_cause_col and root_cause_col in df.columns:
         rc = df[root_cause_col].dropna()
         if not rc.empty:
             top_cause = rc.value_counts().index[0]
-            bullets.append(f"- **{t('Primary Root Cause', '主要根因')}**: {top_cause} {t('is the most frequent category', '為最常見分類')}。")
+            bullets.append(tx(
+                f"- Primary root cause: {top_cause} is the most frequent category.",
+                f"- 主要根因：{top_cause} 是最常見分類。"
+            ))
         else:
-            bullets.append(f"- **{t('Primary Root Cause', '主要根因')}**: {t('Root-cause values are empty', '根因欄位目前無有效值')}。")
+            bullets.append(tx(
+                "- Primary root cause: values are empty.",
+                "- 主要根因：根因欄位目前沒有有效值。"
+            ))
     else:
-        bullets.append(f"- **{t('Primary Root Cause', '主要根因')}**: {t('Missing Root_Cause_Category', '缺少 Root_Cause_Category 欄位')}。")
+        bullets.append(tx(
+            "- Primary root cause: missing Root_Cause_Category.",
+            "- 主要根因：缺少 Root_Cause_Category。"
+        ))
 
     st.markdown("\n".join(bullets))
-    st.caption(t("Tip: Use these bullets in a weekly review or exec update.", "提示：可直接貼到週報/主管更新/跨部門會議紀錄。"))
+
+st.markdown("</div>", unsafe_allow_html=True)
+
