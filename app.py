@@ -1,166 +1,124 @@
-import streamlit as st
 import pandas as pd
-import plotly.express as px
-import sys
+import numpy as np
 from pathlib import Path
 
-# ----------------------------
-# Page config
-# ----------------------------
-st.set_page_config(page_title="Luanta Jira Analytics", layout="wide")
-st.title("📊 Luanta Service Performance Dashboard")
+df = pd.read_csv("/mnt/data/Luanta_Final_Demo_Data.csv").copy()
 
-# Debug: show python version (helps verify runtime.txt is applied)
-with st.expander("Debug info", expanded=False):
-    st.write("Python:", sys.version)
-    st.write("Pandas:", pd.__version__)
+colmap = {
+    "Created_Date (日期)": "Created_Date",
+    "Issue_Key (卡片編號)": "Issue_Key",
+    "Summary (任務內容)": "Summary",
+    "Delay_Rate_%": "Delay_Rate",
+}
+df = df.rename(columns=colmap)
+df["Created_Date"] = pd.to_datetime(df["Created_Date"], errors="coerce")
 
-# ----------------------------
-# Sidebar: upload
-# ----------------------------
-st.sidebar.header("Step 1: Upload Data")
-uploaded_file = st.sidebar.file_uploader("Upload Jira CSV", type="csv")
+rng = np.random.default_rng(42)
 
-# ----------------------------
-# Load data
-# ----------------------------
-df = None
+sla_map = {"P0-Critical": 24, "P1-High": 72, "P2-Medium": 120, "P3-Low": 240}
+df["SLA_Hours"] = df["Priority"].map(sla_map).fillna(120).astype(int)
 
-def load_default_csv():
-    """
-    Load the default CSV shipped with the repo.
-    Uses robust path resolution for Streamlit Cloud.
-    """
-    base_dir = Path(__file__).resolve().parent
-    default_path = base_dir / "Luanta_Final_Demo_Data.csv"
-    return pd.read_csv(default_path)
+actual = pd.to_numeric(df.get("Actual_Hrs", pd.Series([np.nan]*len(df))), errors="coerce").fillna(8).clip(lower=0.5)
+elapsed_hours = (actual * rng.uniform(1.2, 2.2, size=len(df))).round(1)
 
-if uploaded_file is None:
-    try:
-        df = load_default_csv()
-        st.info("💡 正在讀取預設範例數據。您也可以在上傳區丟入新檔案。")
-    except Exception as e:
-        st.warning("請在側邊欄上傳您的 Jira CSV 檔案以開始分析。")
-        with st.expander("Debug: default CSV load error", expanded=False):
-            st.exception(e)
-        df = None
-else:
-    try:
-        df = pd.read_csv(uploaded_file)
-        st.success("✅ 已成功讀取上傳檔案。")
-    except Exception as e:
-        st.error("讀取上傳 CSV 失敗，請確認檔案格式。")
-        st.exception(e)
-        df = None
+in_progress_mask = rng.random(len(df)) < 0.22
+df["Resolved_Date"] = df["Created_Date"] + pd.to_timedelta(elapsed_hours, unit="h")
+df.loc[in_progress_mask, "Resolved_Date"] = pd.NaT
 
-# If no data, stop here.
-if df is None:
-    st.stop()
+last_update_hours = elapsed_hours * rng.uniform(0.6, 1.0, size=len(df))
+df["Last_Updated_Date"] = df["Created_Date"] + pd.to_timedelta(last_update_hours, unit="h")
+df["Last_Updated_Date"] = df[["Last_Updated_Date", "Resolved_Date"]].min(axis=1)
 
-# ----------------------------
-# Column detection & validation
-# ----------------------------
+delay = pd.to_numeric(df.get("Delay_Rate", pd.Series([0]*len(df))), errors="coerce").fillna(0)
+reopen = pd.to_numeric(df.get("Re_open_Count", pd.Series([0]*len(df))), errors="coerce").fillna(0)
 
-# 1) Detect Delay column (contains 'Delay')
-delay_cols = [c for c in df.columns if "Delay" in str(c)]
-if not delay_cols:
-    st.error(
-        "找不到包含 **'Delay'** 的欄位。\n\n"
-        "請確認你的 CSV 有 Delay 相關欄位（例如：`Delay Rate (%)`、`Delay%`、`Delay Rate`）。"
-    )
-    with st.expander("Debug: columns", expanded=False):
-        st.write(list(df.columns))
-    st.stop()
-
-delay_col = delay_cols[0]
-
-# 2) Role column required for chart + report
-if "Role" not in df.columns:
-    st.error(
-        "找不到 **'Role'** 欄位。\n\n"
-        "請確認你的 CSV 有 Role 欄位（例如：Backend / Frontend / QA / PM）。"
-    )
-    with st.expander("Debug: columns", expanded=False):
-        st.write(list(df.columns))
-    st.stop()
-
-# 3) Normalize Delay column to numeric (handle '12.3%' / '12.3' / empty)
-df[delay_col] = (
-    df[delay_col]
-    .astype(str)
-    .str.replace("%", "", regex=False)
-    .str.strip()
-)
-df[delay_col] = pd.to_numeric(df[delay_col], errors="coerce")
-
-# Optional: show a small preview for sanity
-with st.expander("Data preview", expanded=False):
-    st.write("Detected delay column:", delay_col)
-    st.dataframe(df.head(20), use_container_width=True)
-
-# ----------------------------
-# Metrics
-# ----------------------------
-total_tkt = len(df)
-
-if "Priority" in df.columns:
-    p0_count = len(df[df["Priority"] == "P0-Critical"])
-else:
-    p0_count = "N/A"
-
-avg_delay = df[delay_col].mean()
-
-m1, m2, m3 = st.columns(3)
-m1.metric("Total Tickets", total_tkt)
-m2.metric("P0 Critical Issues", p0_count)
-m3.metric("Avg. Delay Rate", f"{avg_delay:.1f}%" if pd.notna(avg_delay) else "N/A")
-
-# ----------------------------
-# Charts
-# ----------------------------
-st.subheader("Performance Breakdown")
-
-# groupby Role
-role_delay = df.groupby("Role", dropna=False)[delay_col].mean().reset_index()
-
-# If Role has NaN, show as "Unknown"
-role_delay["Role"] = role_delay["Role"].fillna("Unknown")
-
-fig = px.bar(
-    role_delay,
-    x="Role",
-    y=delay_col,
-    color="Role",
-    labels={delay_col: "Delay Rate (%)"},
-    title="Average Delay by Team Role"
-)
-st.plotly_chart(fig, use_container_width=True)
-
-# ----------------------------
-# Executive report
-# ----------------------------
-if st.button("Generate Executive Report"):
-    st.subheader("📋 Executive Summary")
-
-    # Backend rate (only if "Backend" exists; otherwise fallback)
-    if (df["Role"] == "Backend").any():
-        backend_rate = df.loc[df["Role"] == "Backend", delay_col].mean()
-        bottleneck_text = f"Backend team shows **{backend_rate:.1f}%** delay." if pd.notna(backend_rate) else "Backend delay is not available."
-    else:
-        # pick max role as bottleneck
-        max_row = role_delay.sort_values(by=delay_col, ascending=False).head(1)
-        if len(max_row) == 1 and pd.notna(max_row.iloc[0][delay_col]):
-            bottleneck_role = str(max_row.iloc[0]["Role"])
-            bottleneck_val = float(max_row.iloc[0][delay_col])
-            bottleneck_text = f"Highest delay is **{bottleneck_role}** with **{bottleneck_val:.1f}%**."
+status = []
+for i in range(len(df)):
+    if pd.notna(df.loc[i, "Resolved_Date"]):
+        if reopen.iloc[i] >= 2:
+            status.append("Done")
+        elif delay.iloc[i] >= 80:
+            status.append(rng.choice(["Done", "QA"], p=[0.7, 0.3]))
         else:
-            bottleneck_text = "Cannot determine bottleneck due to missing delay data."
+            status.append("Done")
+    else:
+        if delay.iloc[i] >= 90:
+            status.append(rng.choice(["Blocked", "Review"], p=[0.6, 0.4]))
+        elif reopen.iloc[i] >= 2:
+            status.append(rng.choice(["QA", "Review"], p=[0.6, 0.4]))
+        else:
+            status.append(rng.choice(["In Progress", "To Do", "Review"], p=[0.6, 0.2, 0.2]))
+df["Status_Current"] = status
 
-    # risk level heuristic (simple)
-    risk_level = "High" if pd.notna(avg_delay) and avg_delay >= 20 else ("Medium" if pd.notna(avg_delay) and avg_delay >= 10 else "Low")
+status_entered_ratio = rng.uniform(0.2, 0.9, size=len(df))
+df["Status_Entered_Date"] = df["Created_Date"] + (df["Last_Updated_Date"] - df["Created_Date"]) * status_entered_ratio
 
-    st.markdown(f"""
-- **Core Bottleneck:** {bottleneck_text}
-- **Risk Level:** {risk_level}
-- **Action Plan:** Establish clear API specifications with MG HQ to reduce back-and-forth communication.
-    """)
+assignees_by_role = {
+    "Backend": ["Alex", "Ben", "Cindy", "Derek"],
+    "Frontend": ["Ethan", "Fiona", "Grace"],
+    "QA": ["Helen", "Ian"],
+    "PM": ["Rosa", "Jamie"],
+    "DevOps": ["Kai", "Leo"],
+    "Data": ["Mia", "Nina"],
+}
+def pick_assignee(role):
+    pool = assignees_by_role.get(str(role), ["Sam", "Taylor"])
+    return rng.choice(pool)
+
+df["Assignee"] = df["Role"].apply(pick_assignee)
+
+summary_lower = df["Summary"].astype(str).str.lower()
+
+root = np.select(
+    [
+        summary_lower.str.contains(r"api|endpoint|callback|integration"),
+        summary_lower.str.contains(r"payment|gateway|transaction"),
+        summary_lower.str.contains(r"slot|game"),
+        summary_lower.str.contains(r"db|database|query"),
+    ],
+    [
+        "API Dependency",
+        "Payments / PSP",
+        "Game Feature / Content",
+        "Data / DB",
+    ],
+    default="Spec / Requirement",
+)
+df["Root_Cause_Category"] = root
+
+blocked_reasons = [
+    "Waiting for HQ API clarification",
+    "Waiting for vendor/PSP response",
+    "Dependency on upstream service release",
+    "Pending security review",
+    "Awaiting UAT sign-off",
+]
+df["Blocked_Reason"] = np.where(df["Status_Current"].eq("Blocked"), rng.choice(blocked_reasons, size=len(df)), "")
+
+upstream_choices = ["MG HQ", "PSP Vendor", "Internal Platform", "Compliance", "N/A"]
+downstream_choices = ["Client Ops", "Finance", "CS", "N/A"]
+df["Upstream_Team"] = rng.choice(upstream_choices, size=len(df))
+df["Downstream_Team"] = rng.choice(downstream_choices, size=len(df))
+
+df["Handoff_Count"] = (rng.integers(0, 2, size=len(df)) + (reopen > 0).astype(int) + (delay >= 80).astype(int)).clip(0, 5)
+
+df["Lead_Time_Hours"] = (df["Resolved_Date"] - df["Created_Date"]).dt.total_seconds() / 3600
+df["SLA_Breached"] = np.where(df["Resolved_Date"].notna() & (df["Lead_Time_Hours"] > df["SLA_Hours"]), "Y", "N")
+
+ordered = [
+    "Issue_Key", "Summary", "Role", "Assignee", "Priority",
+    "Created_Date", "Last_Updated_Date", "Status_Current", "Status_Entered_Date", "Resolved_Date",
+    "Estimate_Hrs", "Actual_Hrs", "Delay_Rate", "Re_open_Count",
+    "Handoff_Count", "SLA_Hours", "SLA_Breached", "Lead_Time_Hours",
+    "Root_Cause_Category", "Blocked_Reason", "Upstream_Team", "Downstream_Team"
+]
+for c in df.columns:
+    if c not in ordered:
+        ordered.append(c)
+
+df_out = df[ordered].copy()
+
+out_path = Path("/mnt/data/Luanta_Final_Demo_Data_v1.csv")
+df_out.to_csv(out_path, index=False, encoding="utf-8-sig")
+
+(out_path.as_posix(), df_out.head(3))
