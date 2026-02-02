@@ -1,0 +1,201 @@
+﻿Created_Date (日期),Issue_Key (卡片編號),Summary (任務內容),Role,Priority,Estimate_Hrs,Actual_Hrs,Re_open_Count,Delay_Rate_%
+2025-01-01,LUANTA-2093,Cross-border payment gateway callback issue,Backend,P2-Medium,9,18.9,2,110.1
+2025-01-01,LUANTA-2104,New Slot Game API end-point validation,Backend,P1-High,7,11.7,1,67.4
+2025-01-02,LUANTA-2028,Database deadlock investigation during peak hours,Backend,P1-High,15,21.9,0,46.2
+2025-01-02,LUANTA-2036,MG Wallet API Integration for Operator A,Backend,P2-Medium,15,31.0,2,107.0
+2025-01-04,LUANTA-2182,WebSocket disconnection issue on iOS,Frontend,P3-Low,13,17.7,0,36.0
+2025-01-04,LUANTA-2068,Market research on Asian payment trends,Product Manager,P2-Medium,4,5.4,0,34.7
+2025-01-07,LUANTA-2084,Cross-border payment gateway callback issue,Backend,P1-High,11,16.4,2,48.7
+2025-01-14,LUANTA-2007,Market research on Asian payment trends,Product Manager,P3-Low,13,14.6,0,12.2
+2025-01-17,LUANTA-2184,Cross-border payment gateway callback issue,Backend,P1-High,12,24.0,1,99.7
+2025-01-19,LUANTA-2088,Casino lobby dark mode design,UI/UX,P1-High,5,5.9,0,18.7
+2025-01-19,LUANTA-2167,WebSocket disconnection issue on iOS,Frontend,P3-Low,4,5.2,0,31.0
+2025-01-23,LUANTA-2103,Cross-border payment gateway callback issue,Backend,P3-Low,8,20.3,2,153.4
+2025-01-25,LUANTA-2080,Bonus system calculation logic fix,Backend,P1-High,14,23.2,2,65.5
+2025-01-26,LUANTA-2132,Game Asset loading speed improvement,Frontend,P2-Medium,15,16.2,0,8.2
+2025-01-27,LUANTA-2185,MG Wallet API Integration for Operator A,Backend,P0-Critical,9,20.5,0,127.9
+2025-01-29,LUANTA-2085,Integration of new promotional banners,Frontend,P1-High,9,12.6,0,39.5
+2025-02-01,LUANTA-2166,Post-mortem report for API downtime event,Product Manager,P3-Low,4,4.1,0,1.5
+2025-02-05,LUANTA-2130,New player registration flow optimization,UI/UX,P2-Medium,7,9.7,0,38.8
+2025-02-13,LUANTA-2091,Cross-border payment gateway callback issue,Backend,P3-Low,8,11.6,2,45.2
+2025-02-13,LUANTA-2071,Post-mortem report for API downtime event,Product Manager,P3-Low,15,15.6,0,4.0
+2025-02-13,LUANTA-2022,Compliance audit for European regulators,Product Manager,P3-Low,14,15.8,0,13.0
+2025-02-15,LUANTA-2117,Database deadlock investigation during peak hours,Backend,P1-High,4,8.0,1,100.4
+2025-02-16,LUANTA-2118,MG Wallet API Integration for Operator A,Backend,P0-Critical,9,13.5,2,49.8
+2025-02-17,LUANTA-2016,Post-mortem report for API downtime event,Product Manager,P1-High,6,7.4,0,23.7
+2025-02-19,LUANTA-2009,E-ticket module style customization,UI/UX,P3-Low,5,5.9,0,17.0
+2025-02-20,LUANTA-2156,Cross-border payment gateway callback issue,Backend,P2-Medium,11,26.5,2,140.9
+2025-02-22,LUANTA-2112,Database deadlock investigation during peak hours,Backend,P3-Low,14,29.3,0,109.6
+2025-02-23,LUANTA-2056,Game Asset loading speed improvement,Frontend,P3-Low,15,17.0,0,13.1
+2025-02-23,LUANTA-2106,E-ticket module style customization,UI/UX,P1-High,8,8.3,0,3.5
+2025-02-24,LUANTA-2169,Requirement doc for wash-requirement logic,Product Manager,P1-High,13,14.4,0,10.8
+2025-02-24,LUANTA-2189,User experience audit for sports betting module,UI/UX,P3-Low,11,11.9,0,8.6
+2025-03-02,LUANTA-2115,New player registration flow optimization,UI/UX,P2-Medium,6,6.1,0,1.6
+2025-03-07,LUANTA-2021,New player registration flow optimization,UI/UX,P1-High,12,12.5,0,4.2
+2025-03-08,LUANTA-2125,MG Wallet API Integration for Operator A,Backend,P2-Medium,5,7.5,1,50.4
+2025-03-16,LUANTA-2183,WebSocket disconnection issue on iOS,Frontend,P1-High,8,10.6,0,32.6
+2025-03-16,LUANTA-2074,Cross-border payment gateway callback issue,Backend,P1-High,11,25.1,2,128.2
+2025-03-17,LUANTA-2083,Risk control dashboard redesign,UI/UX,P1-High,13,17.4,0,33.5
+2025-03-23,LUANTA-2098,Casino lobby dark mode design,UI/UX,P3-Low,8,10.0,0,24.5
+2025-03-27,LUANTA-2124,Database deadlock investigation during peak hours,Backend,P3-Low,15,25.2,0,68.0
+2025-03-27,LUANTA-2064,Mobile lobby UI rendering optimization,Frontend,P1-High,15,15.3,0,1.8
+2025-03-27,LUANTA-2199,Database deadlock investigation during peak hours,Backend,P1-High,10,14.4,1,44.1
+2025-03-28,LUANTA-2170,Multi-language localization update (Thai/Vietnamese),Frontend,P2-Medium,5,6.7,0,34.7
+2025-03-31,LUANTA-2134,Post-mortem report for API downtime event,Product Manager,P1-High,14,19.2,0,37.3
+2025-04-02,LUANTA-2008,Bonus system calculation logic fix,Backend,P1-High,10,21.3,2,113.2
+2025-04-05,LUANTA-2105,Market research on Asian payment trends,Product Manager,P0-Critical,13,26.3,1,102.4
+2025-04-06,LUANTA-2076,Post-mortem report for API downtime event,Product Manager,P1-High,15,17.6,0,17.2
+2025-04-06,LUANTA-2026,Risk control dashboard redesign,UI/UX,P1-High,7,8.0,0,14.5
+2025-04-08,LUANTA-2031,Requirement doc for wash-requirement logic,Product Manager,P2-Medium,4,4.2,0,6.0
+2025-04-09,LUANTA-2037,Casino lobby dark mode design,UI/UX,P1-High,6,8.1,0,34.3
+2025-04-14,LUANTA-2143,Requirement doc for wash-requirement logic,Product Manager,P2-Medium,9,10.9,0,21.6
+2025-04-14,LUANTA-2145,Game Asset loading speed improvement,Frontend,P2-Medium,10,10.5,0,4.7
+2025-04-18,LUANTA-2057,Post-mortem report for API downtime event,Product Manager,P2-Medium,10,10.3,0,3.4
+2025-04-19,LUANTA-2081,Post-mortem report for API downtime event,Product Manager,P2-Medium,13,18.1,0,39.0
+2025-04-21,LUANTA-2154,Multi-language localization update (Thai/Vietnamese),Frontend,P1-High,14,19.2,0,37.3
+2025-04-22,LUANTA-2107,User experience audit for sports betting module,UI/UX,P2-Medium,8,10.0,0,25.6
+2025-04-23,LUANTA-2168,New player registration flow optimization,UI/UX,P2-Medium,9,11.8,0,30.6
+2025-04-25,LUANTA-2073,Mobile lobby UI rendering optimization,Frontend,P2-Medium,10,10.5,0,4.7
+2025-04-25,LUANTA-2151,Game Asset loading speed improvement,Frontend,P0-Critical,7,14.4,0,105.1
+2025-04-26,LUANTA-2038,Game Asset loading speed improvement,Frontend,P2-Medium,4,4.3,0,6.5
+2025-04-28,LUANTA-2062,Mobile lobby UI rendering optimization,Frontend,P1-High,11,15.1,0,37.4
+2025-04-28,LUANTA-2131,Q3 Roadmap planning and stakeholder review,Product Manager,P0-Critical,11,24.9,2,126.7
+2025-04-29,LUANTA-2177,Multi-language localization update (Thai/Vietnamese),Frontend,P1-High,7,8.7,0,25.0
+2025-04-29,LUANTA-2123,User experience audit for sports betting module,UI/UX,P1-High,15,15.1,0,0.8
+2025-05-06,LUANTA-2029,Database deadlock investigation during peak hours,Backend,P2-Medium,8,15.9,2,98.7
+2025-05-08,LUANTA-2180,Risk control dashboard redesign,UI/UX,P3-Low,5,5.0,0,0.9
+2025-05-08,LUANTA-2042,Q3 Roadmap planning and stakeholder review,Product Manager,P3-Low,15,18.1,0,20.4
+2025-05-09,LUANTA-2061,New player registration flow optimization,UI/UX,P2-Medium,13,13.8,0,6.3
+2025-05-09,LUANTA-2192,MG Wallet API Integration for Operator A,Backend,P1-High,14,29.7,0,111.8
+2025-05-11,LUANTA-2002,Post-mortem report for API downtime event,Product Manager,P1-High,5,6.4,0,28.9
+2025-05-12,LUANTA-2142,Mobile lobby UI rendering optimization,Frontend,P2-Medium,13,15.0,0,15.7
+2025-05-13,LUANTA-2155,Post-mortem report for API downtime event,Product Manager,P3-Low,11,13.9,0,26.1
+2025-05-13,LUANTA-2082,Game Asset loading speed improvement,Frontend,P2-Medium,10,12.2,0,21.8
+2025-05-16,LUANTA-2014,New Slot Game API end-point validation,Backend,P2-Medium,6,13.5,1,124.8
+2025-05-16,LUANTA-2095,Market research on Asian payment trends,Product Manager,P2-Medium,15,18.5,0,23.3
+2025-05-17,LUANTA-2139,Database deadlock investigation during peak hours,Backend,P2-Medium,15,27.8,2,85.5
+2025-05-18,LUANTA-2111,MG Wallet API Integration for Operator A,Backend,P3-Low,13,30.2,0,132.3
+2025-05-22,LUANTA-2053,Compliance audit for European regulators,Product Manager,P1-High,6,6.8,0,13.5
+2025-05-26,LUANTA-2100,MG Wallet API Integration for Operator A,Backend,P2-Medium,14,29.6,0,111.3
+2025-05-27,LUANTA-2033,Compliance audit for European regulators,Product Manager,P0-Critical,10,16.1,1,60.9
+2025-05-27,LUANTA-2175,Cross-border payment gateway callback issue,Backend,P1-High,6,12.6,0,110.0
+2025-05-29,LUANTA-2158,Mobile lobby UI rendering optimization,Frontend,P2-Medium,8,9.1,0,13.4
+2025-06-01,LUANTA-2069,Compliance audit for European regulators,Product Manager,P3-Low,5,6.1,0,22.9
+2025-06-02,LUANTA-2144,Risk control dashboard redesign,UI/UX,P2-Medium,4,4.6,0,15.7
+2025-06-03,LUANTA-2159,Q3 Roadmap planning and stakeholder review,Product Manager,P2-Medium,6,7.0,0,15.9
+2025-06-05,LUANTA-2163,New player registration flow optimization,UI/UX,P2-Medium,8,9.6,0,20.6
+2025-06-06,LUANTA-2150,Post-mortem report for API downtime event,Product Manager,P1-High,7,9.0,0,28.9
+2025-06-06,LUANTA-2013,Post-mortem report for API downtime event,Product Manager,P1-High,4,4.0,0,0.6
+2025-06-07,LUANTA-2059,Game Asset loading speed improvement,Frontend,P2-Medium,4,4.6,0,16.0
+2025-06-07,LUANTA-2046,Cross-border payment gateway callback issue,Backend,P3-Low,8,19.7,1,146.0
+2025-06-10,LUANTA-2048,New Slot Game API end-point validation,Backend,P1-High,5,10.3,2,106.8
+2025-06-10,LUANTA-2135,Database deadlock investigation during peak hours,Backend,P2-Medium,11,17.2,0,56.1
+2025-06-17,LUANTA-2136,Market research on Asian payment trends,Product Manager,P1-High,7,7.7,0,10.2
+2025-06-19,LUANTA-2051,Market research on Asian payment trends,Product Manager,P2-Medium,6,6.6,0,10.2
+2025-06-19,LUANTA-2116,Cross-border payment gateway callback issue,Backend,P1-High,9,13.6,0,50.6
+2025-06-22,LUANTA-2186,MG Wallet API Integration for Operator A,Backend,P2-Medium,13,24.5,1,88.5
+2025-06-23,LUANTA-2049,WebSocket disconnection issue on iOS,Frontend,P3-Low,9,10.3,0,14.3
+2025-06-26,LUANTA-2101,Integration of new promotional banners,Frontend,P3-Low,4,4.7,0,18.7
+2025-06-26,LUANTA-2164,Bonus system calculation logic fix,Backend,P3-Low,9,21.9,1,143.3
+2025-06-28,LUANTA-2146,WebSocket disconnection issue on iOS,Frontend,P1-High,7,9.2,0,31.8
+2025-06-28,LUANTA-2070,New Slot Game API end-point validation,Backend,P2-Medium,8,17.2,2,115.1
+2025-06-28,LUANTA-2019,Mobile lobby UI rendering optimization,Frontend,P0-Critical,7,14.5,1,107.6
+2025-06-29,LUANTA-2120,Database deadlock investigation during peak hours,Backend,P2-Medium,15,27.6,0,84.3
+2025-07-02,LUANTA-2113,Casino lobby dark mode design,UI/UX,P1-High,9,11.5,0,27.9
+2025-07-03,LUANTA-2114,Q3 Roadmap planning and stakeholder review,Product Manager,P1-High,6,8.1,0,35.0
+2025-07-06,LUANTA-2121,New Slot Game API end-point validation,Backend,P0-Critical,10,22.2,2,122.5
+2025-07-06,LUANTA-2078,New Slot Game API end-point validation,Backend,P1-High,4,5.9,2,46.4
+2025-07-07,LUANTA-2005,Casino lobby dark mode design,UI/UX,P1-High,15,18.1,0,20.6
+2025-07-10,LUANTA-2090,Bonus system calculation logic fix,Backend,P1-High,4,6.0,1,49.9
+2025-07-11,LUANTA-2108,E-ticket module style customization,UI/UX,P1-High,5,5.7,0,14.0
+2025-07-11,LUANTA-2003,Multi-language localization update (Thai/Vietnamese),Frontend,P1-High,8,10.0,0,24.7
+2025-07-11,LUANTA-2063,Cross-border payment gateway callback issue,Backend,P3-Low,9,20.5,0,127.6
+2025-07-16,LUANTA-2176,Multi-language localization update (Thai/Vietnamese),Frontend,P3-Low,14,15.5,0,10.4
+2025-07-19,LUANTA-2197,Mobile lobby UI rendering optimization,Frontend,P2-Medium,5,6.0,0,19.6
+2025-07-20,LUANTA-2191,New player registration flow optimization,UI/UX,P2-Medium,5,5.2,0,4.3
+2025-07-22,LUANTA-2030,Requirement doc for wash-requirement logic,Product Manager,P2-Medium,4,5.2,0,29.1
+2025-07-23,LUANTA-2065,Database deadlock investigation during peak hours,Backend,P1-High,13,25.9,0,99.0
+2025-07-31,LUANTA-2097,Cross-border payment gateway callback issue,Backend,P1-High,15,25.9,0,72.5
+2025-08-03,LUANTA-2001,Casino lobby dark mode design,UI/UX,P2-Medium,14,18.9,0,34.6
+2025-08-11,LUANTA-2174,WebSocket disconnection issue on iOS,Frontend,P1-High,10,12.5,0,25.3
+2025-08-14,LUANTA-2178,Integration of new promotional banners,Frontend,P2-Medium,15,16.3,0,8.8
+2025-08-15,LUANTA-2092,Requirement doc for wash-requirement logic,Product Manager,P0-Critical,7,10.4,0,49.1
+2025-08-15,LUANTA-2190,Compliance audit for European regulators,Product Manager,P2-Medium,14,18.7,0,33.9
+2025-08-15,LUANTA-2017,Integration of new promotional banners,Frontend,P3-Low,6,7.8,0,30.4
+2025-08-16,LUANTA-2096,Requirement doc for wash-requirement logic,Product Manager,P1-High,9,9.1,0,1.3
+2025-08-17,LUANTA-2193,E-ticket module style customization,UI/UX,P3-Low,15,20.8,0,38.7
+2025-08-19,LUANTA-2147,New Slot Game API end-point validation,Backend,P2-Medium,7,18.2,1,159.7
+2025-08-19,LUANTA-2023,Risk control dashboard redesign,UI/UX,P3-Low,4,4.4,0,9.1
+2025-08-19,LUANTA-2015,Database deadlock investigation during peak hours,Backend,P2-Medium,12,30.0,2,149.8
+2025-08-21,LUANTA-2024,Game Asset loading speed improvement,Frontend,P0-Critical,10,16.0,1,59.8
+2025-08-24,LUANTA-2126,Game Asset loading speed improvement,Frontend,P2-Medium,13,14.5,0,11.4
+2025-08-24,LUANTA-2004,Mobile lobby UI rendering optimization,Frontend,P2-Medium,4,4.8,0,21.0
+2025-08-25,LUANTA-2020,New Slot Game API end-point validation,Backend,P1-High,7,17.7,1,153.1
+2025-08-25,LUANTA-2181,Mobile lobby UI rendering optimization,Frontend,P2-Medium,10,10.9,0,8.7
+2025-08-26,LUANTA-2043,Integration of new promotional banners,Frontend,P1-High,6,8.1,0,35.7
+2025-08-27,LUANTA-2172,Post-mortem report for API downtime event,Product Manager,P1-High,6,8.1,0,35.5
+2025-08-30,LUANTA-2072,Game Asset loading speed improvement,Frontend,P0-Critical,10,14.9,0,48.5
+2025-09-04,LUANTA-2171,Requirement doc for wash-requirement logic,Product Manager,P0-Critical,11,18.0,1,63.5
+2025-09-07,LUANTA-2067,Requirement doc for wash-requirement logic,Product Manager,P1-High,13,15.6,0,20.0
+2025-09-11,LUANTA-2039,Game Asset loading speed improvement,Frontend,P2-Medium,12,15.2,0,26.5
+2025-09-11,LUANTA-2152,Database deadlock investigation during peak hours,Backend,P3-Low,11,23.1,0,110.0
+2025-09-14,LUANTA-2165,Post-mortem report for API downtime event,Product Manager,P2-Medium,10,11.7,0,17.1
+2025-09-21,LUANTA-2196,Post-mortem report for API downtime event,Product Manager,P3-Low,4,5.1,0,26.4
+2025-09-22,LUANTA-2137,New Slot Game API end-point validation,Backend,P0-Critical,11,23.4,1,112.7
+2025-09-24,LUANTA-2188,Game Asset loading speed improvement,Frontend,P0-Critical,7,15.8,0,126.3
+2025-09-25,LUANTA-2027,Database deadlock investigation during peak hours,Backend,P1-High,6,10.6,0,76.1
+2025-09-27,LUANTA-2011,Multi-language localization update (Thai/Vietnamese),Frontend,P1-High,12,16.6,0,38.4
+2025-09-28,LUANTA-2000,Casino lobby dark mode design,UI/UX,P2-Medium,11,13.6,0,23.9
+2025-09-30,LUANTA-2050,Risk control dashboard redesign,UI/UX,P2-Medium,12,15.4,0,28.1
+2025-10-01,LUANTA-2122,New player registration flow optimization,UI/UX,P2-Medium,9,10.9,0,21.3
+2025-10-02,LUANTA-2194,Integration of new promotional banners,Frontend,P2-Medium,15,19.8,0,32.3
+2025-10-02,LUANTA-2133,Multi-language localization update (Thai/Vietnamese),Frontend,P1-High,4,5.2,0,29.4
+2025-10-04,LUANTA-2044,Risk control dashboard redesign,UI/UX,P2-Medium,15,19.0,0,26.8
+2025-10-07,LUANTA-2179,Mobile lobby UI rendering optimization,Frontend,P2-Medium,13,15.9,0,22.6
+2025-10-11,LUANTA-2079,E-ticket module style customization,UI/UX,P0-Critical,6,11.9,0,99.2
+2025-10-13,LUANTA-2099,WebSocket disconnection issue on iOS,Frontend,P0-Critical,14,20.4,0,45.4
+2025-10-13,LUANTA-2141,New Slot Game API end-point validation,Backend,P1-High,8,13.0,0,62.4
+2025-10-15,LUANTA-2054,Requirement doc for wash-requirement logic,Product Manager,P2-Medium,12,12.7,0,6.2
+2025-10-16,LUANTA-2148,Bonus system calculation logic fix,Backend,P1-High,9,20.3,0,125.7
+2025-10-16,LUANTA-2041,Post-mortem report for API downtime event,Product Manager,P2-Medium,7,8.0,0,14.7
+2025-10-16,LUANTA-2128,Cross-border payment gateway callback issue,Backend,P1-High,9,15.0,0,67.0
+2025-10-18,LUANTA-2173,Requirement doc for wash-requirement logic,Product Manager,P1-High,7,9.6,0,37.8
+2025-10-19,LUANTA-2087,Bonus system calculation logic fix,Backend,P2-Medium,6,14.0,1,133.3
+2025-10-21,LUANTA-2149,Integration of new promotional banners,Frontend,P1-High,7,8.3,0,18.3
+2025-10-21,LUANTA-2160,Database deadlock investigation during peak hours,Backend,P3-Low,10,18.2,1,81.6
+2025-10-25,LUANTA-2035,New Slot Game API end-point validation,Backend,P1-High,10,21.9,2,119.2
+2025-10-29,LUANTA-2047,Cross-border payment gateway callback issue,Backend,P3-Low,6,15.5,0,157.6
+2025-11-03,LUANTA-2006,Post-mortem report for API downtime event,Product Manager,P2-Medium,12,12.3,0,2.6
+2025-11-03,LUANTA-2025,WebSocket disconnection issue on iOS,Frontend,P1-High,15,16.5,0,9.8
+2025-11-06,LUANTA-2010,Integration of new promotional banners,Frontend,P2-Medium,5,6.6,0,31.0
+2025-11-06,LUANTA-2187,Game Asset loading speed improvement,Frontend,P0-Critical,4,6.0,1,49.9
+2025-11-07,LUANTA-2102,E-ticket module style customization,UI/UX,P1-High,4,4.9,0,21.4
+2025-11-09,LUANTA-2052,Compliance audit for European regulators,Product Manager,P3-Low,7,8.8,0,26.0
+2025-11-10,LUANTA-2055,WebSocket disconnection issue on iOS,Frontend,P1-High,9,9.9,0,10.0
+2025-11-13,LUANTA-2089,Mobile lobby UI rendering optimization,Frontend,P2-Medium,10,13.0,0,29.8
+2025-11-13,LUANTA-2045,New Slot Game API end-point validation,Backend,P1-High,7,10.0,1,42.9
+2025-11-14,LUANTA-2138,E-ticket module style customization,UI/UX,P3-Low,15,17.5,0,16.3
+2025-11-16,LUANTA-2127,WebSocket disconnection issue on iOS,Frontend,P3-Low,14,16.0,0,14.2
+2025-11-16,LUANTA-2140,Post-mortem report for API downtime event,Product Manager,P2-Medium,11,14.6,0,33.1
+2025-11-26,LUANTA-2195,MG Wallet API Integration for Operator A,Backend,P1-High,10,20.3,0,102.6
+2025-11-26,LUANTA-2094,Bonus system calculation logic fix,Backend,P3-Low,11,23.6,0,114.4
+2025-11-27,LUANTA-2129,Q3 Roadmap planning and stakeholder review,Product Manager,P1-High,10,10.2,0,2.1
+2025-12-01,LUANTA-2109,Game Asset loading speed improvement,Frontend,P2-Medium,6,8.2,0,36.2
+2025-12-01,LUANTA-2110,Compliance audit for European regulators,Product Manager,P2-Medium,10,12.1,0,20.9
+2025-12-03,LUANTA-2119,New player registration flow optimization,UI/UX,P1-High,7,9.3,0,32.2
+2025-12-04,LUANTA-2012,Cross-border payment gateway callback issue,Backend,P1-High,11,20.1,0,82.8
+2025-12-04,LUANTA-2040,Database deadlock investigation during peak hours,Backend,P1-High,9,17.4,2,93.8
+2025-12-08,LUANTA-2086,Compliance audit for European regulators,Product Manager,P3-Low,4,5.5,0,37.9
+2025-12-10,LUANTA-2162,Q3 Roadmap planning and stakeholder review,Product Manager,P2-Medium,4,5.2,0,31.2
+2025-12-12,LUANTA-2157,Bonus system calculation logic fix,Backend,P1-High,9,21.6,0,140.5
+2025-12-12,LUANTA-2060,User experience audit for sports betting module,UI/UX,P2-Medium,13,18.0,0,38.5
+2025-12-15,LUANTA-2032,Casino lobby dark mode design,UI/UX,P1-High,7,7.9,0,13.0
+2025-12-16,LUANTA-2058,New Slot Game API end-point validation,Backend,P1-High,10,15.7,0,56.6
+2025-12-21,LUANTA-2077,MG Wallet API Integration for Operator A,Backend,P2-Medium,4,8.2,0,104.1
+2025-12-23,LUANTA-2075,MG Wallet API Integration for Operator A,Backend,P2-Medium,11,26.1,2,136.8
+2025-12-23,LUANTA-2066,Database deadlock investigation during peak hours,Backend,P2-Medium,13,33.0,2,153.9
+2025-12-25,LUANTA-2018,Game Asset loading speed improvement,Frontend,P1-High,12,15.4,0,28.4
+2025-12-26,LUANTA-2034,Q3 Roadmap planning and stakeholder review,Product Manager,P2-Medium,14,15.9,0,13.6
+2025-12-29,LUANTA-2153,E-ticket module style customization,UI/UX,P1-High,13,16.0,0,23.4
+2025-12-30,LUANTA-2161,New Slot Game API end-point validation,Backend,P2-Medium,6,10.2,1,69.8
+2025-12-31,LUANTA-2198,New player registration flow optimization,UI/UX,P2-Medium,13,16.1,0,23.5
